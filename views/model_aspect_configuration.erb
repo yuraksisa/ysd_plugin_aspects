@@ -1,0 +1,180 @@
+<%= include('entity-management') %>
+
+<script type="text/tmpl" id="elements_title">
+  <h2 class="entity-title">Aspect configuration</h2>
+</script>
+
+<script type="text/tmpl" id="elements_description">
+
+  <p>Aspect configuration. The following parameters can be customized for the aspect</p>
+
+</script>
+
+<!-- Renders the elements container -->
+<script type="text/tmpl" id="elements_container_template">
+
+</script>
+
+<!-- Renders one element in the elements list view -->
+        
+<script type="text/tmpl" id="elements_list_template">
+
+</script>
+
+<!-- Renders one element in the element view (full detailed) -->
+
+<script type="text/tmpl" id="element_template">
+
+</script>
+
+<!-- Renders the form to edit an element -->
+
+<script type="text/tmpl" id="element_template_form">
+              
+     <form name="element">
+   
+        <div class="form-fields">
+          
+          <div class="formrow">
+            <div class="entity-field">
+              <span class="entity-fieldlabel">Aspect</span> 
+              <span class="entity-fieldvalue"><%= aspect %></span> 
+            </div>
+          </div>
+          <div class="formrow">
+            <div class="entity-field">
+              <span class="entity-fieldlabel"><%= model_type %></span> 
+              <span class="entity-fieldvalue"><%= model %></span> 
+            </div>          
+          </div>
+
+          <div id="tabs">
+
+           <ul>
+             <%= render_tab('tab_entity_management', t.model_aspect_configuration.form.em_render) %>
+             <%= render_tab('tab_entity_render', t.model_aspect_configuration.form.render) %>
+             <% if aspect_config_form.to_s.strip.length > 0 %>
+             <%= render_tab('tab_configuration', t.model_aspect_configuration.form.configuration) %>
+             <% end %>
+           </ul>
+           
+           <div id="tab_entity_management">
+             <div class="formrow">
+               <label for="weight" class="fieldtitle"><%=t.model_aspect_configuration.form.weight.label%></label>
+               <select id="weight" name="weight" id="weight" class="fieldcontrol"/>
+             </div>
+             <div class="formrow">
+               <label for="show_on_new" class="fieldtitle"><%=t.model_aspect_configuration.form.show_on_new.label%></label>
+               <input type="radio" name="show_on_new" id="show_on_new_true" value="true" <%%if (entity && entity.show_on_new) { %>checked="checked"<%%}%>/><%= t.model_aspect_configuration.form.rb_yes.label%>
+               <input type="radio" name="show_on_new" id="show_on_new_false" value="false" <%%if (entity && !entity.show_on_new) { %>checked="checked"<%%}%>/><%= t.model_aspect_configuration.form.rb_no.label%>
+             </div>
+             <div class="formrow">
+               <label for="show_on_edit" class="fieldtitle"><%=t.model_aspect_configuration.form.show_on_edit.label%></label>
+               <input type="radio" name="show_on_edit" id="show_on_edit_true" value="true" <%%if (entity && entity.show_on_edit) { %>checked="checked"<%%}%>/><%= t.model_aspect_configuration.form.rb_yes.label%>
+               <input type="radio" name="show_on_edit" id="show_on_edit_false" value="false" <%%if (entity && !entity.show_on_edit) { %>checked="checked"<%%}%>/><%= t.model_aspect_configuration.form.rb_no.label%>
+             </div>
+             <div class="formrow">
+               <label for="show_on_view" class="fieldtitle"><%=t.model_aspect_configuration.form.show_on_view.label%></label>
+               <input type="radio" name="show_on_view" id="show_on_view_true" value="true" <%%if (entity && entity.show_on_view) { %>checked="checked"<%%}%>/><%= t.model_aspect_configuration.form.rb_yes.label%>
+               <input type="radio" name="show_on_view" id="show_on_view_false" value="false" <%%if (entity && !entity.show_on_view) { %>checked="checked"<%%}%>/><%= t.model_aspect_configuration.form.rb_no.label%>
+             </div>                                    
+             <div class="formrow">
+               <label for="in_group" class="fieldtitle"><%=t.model_aspect_configuration.form.in_group.label%></label>
+               <input type="radio" name="in_group" id="in_group_true" value="true" <%%if (entity && entity.in_group) { %>checked="checked"<%%}%>/><%= t.model_aspect_configuration.form.rb_yes.label%>
+               <input type="radio" name="in_group" id="in_group_false" value="false" <%%if (entity && !entity.in_group) { %>checked="checked"<%%}%>/><%= t.model_aspect_configuration.form.rb_no.label%>
+             </div>
+           </div>
+
+           <div id="tab_entity_render">
+             <div class="formrow">
+               <label for="render_weight" class="fieldtitle"><%=t.model_aspect_configuration.form.weight.label%></label>
+               <select id="render_weight" name="render_weight" id="render_weight" class="fieldcontrol"/>
+             </div>
+
+             <div class="formrow">
+               <label for="render_in_group" class="fieldtitle"><%=t.model_aspect_configuration.form.in_group.label%></label>
+               <input type="radio" name="render_in_group" id="render_in_group_true" value="true" <%%if (entity && entity.render_in_group) { %>checked="checked"<%%}%>/><%= t.model_aspect_configuration.form.rb_yes.label%>
+               <input type="radio" name="render_in_group" id="render_in_group_false" value="false" <%%if (entity && !entity.render_in_group) { %>checked="checked"<%%}%>/><%= t.model_aspect_configuration.form.rb_no.label%>
+             </div>
+           </div>
+           <% if aspect_config_form.to_s.strip.length > 0 %>
+           <div id="tab_configuration">
+              <%= aspect_config_form %>
+           </div>
+           <% end %>
+          </div>
+
+
+        </div>
+        
+        <div class="bottom-navigation-bar navigation-bar">
+             <div class="navigation-bar-nav-buttons">
+                <%% if (entity) { %>
+                  <input type="submit" class="update-entity-button action-button entity-management-button" value="Update"/>
+                <%% } 
+                   else { %>
+                  <input type="submit" class="create-entity-button action-button entity-management-button" value="Create"/>
+                <%% } %>
+             </div>
+        </div>
+     
+     </form>
+     
+
+</script>
+
+<%= aspect_config_form_extension %>
+
+<script type="text/javascript">
+
+require(['YSDEntityManagement', 'YSDMemoryDataSource', 'YSDSelectSelector', 'jquery', 'jquery.ui'], function(EntityManagement, MemoryDataSource, SelectSelector, $) {
+ 
+  function AspectConfigurationHook() {
+ 	   
+    this.entityKey = function(entity) {
+      return entity.id;
+    }
+
+    this.onEdit = function(entity) {
+      this.configForm(entity);
+    }
+
+    this.onNew = function() {
+      this.configForm(null);
+    }
+  	
+    this.configForm = function(entity) {
+      
+      // Configure tabs
+      $('#tabs').tabs().addClass( "ui-tabs-vertical ui-helper-clearfix" );
+      $( "#tabs li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );
+      
+      // Configure weights
+      var weights = [];
+      for (var idx=-10;idx<=10;idx++) { weights.push(idx); }
+
+      var weightValue = (entity && entity.weight)?entity.weight:0;
+      var weightsDataSource =  new MemoryDataSource(weights);
+      var weightsSelect = new SelectSelector('weight', weightsDataSource, weightValue);
+
+      var renderWeightValue = (entity && entity.render_weight)?entity.render_weight:0;
+      var renderWeightsDataSource =  new MemoryDataSource(weights);
+      var renderWeightsSelect = new SelectSelector('render_weight', renderWeightsDataSource, renderWeightValue);
+
+
+    }
+
+  };
+  
+  var urls = { 
+  	           get_url    : '<%=get_url%>',
+  	           update_url : '<%=update_url%>'
+  	         };
+
+  var aspectConfigurationHook = new AspectConfigurationHook();
+  var aspectConfigurationManager = new EntityManagement(urls, 'aspect configuration', 1, aspectConfigurationHook,
+           {url_base: '<%=url_base%>', action: 'edit', hold_form_after_action: true}); 
+   
+});
+  
+</script>

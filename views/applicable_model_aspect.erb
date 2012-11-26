@@ -1,0 +1,149 @@
+<%= include('entity-management') %>
+
+<!-- Renders the element description -->
+<script type="text/tmpl" id="elements_title">
+  <h2 class="entity-title"><%= t.aplicable_model_aspects.title %></h2>
+</script>
+
+<!-- Renders the element description -->
+<script type="text/tmpl" id="elements_description">
+  
+  <%= t.aplicable_model_aspects.description %>
+
+</script>
+
+<!-- Renders the elements container -->
+<script type="text/tmpl" id="elements_container_template">
+
+  <table id="elements_table" class="table">
+     <thead class="table-header">
+       <tr>
+         <th class="table-header-title" scope="col" style="width:50%"><%= t.aplicable_model_aspects.table.model.label %></th>
+       </tr>
+     </thead>
+     <tbody id="elements_tbody" class="table-tbody">             
+     </tbody>
+  </table>
+
+</script>
+
+<!-- Renders one element in the elements list view -->
+        
+<script type="text/tmpl" id="elements_list_template">
+
+    <tr class="table-row element-navigation-detail" rel="<%%= index %>" id="element_row_<%%=index%>">
+      <td class="table-cell"><%%= entity.id %></td>
+    </tr>
+
+</script>
+
+<!-- Renders one element in the element view (full detailed) -->
+
+<script type="text/tmpl" id="element_template">
+
+     <div class="element_template" style="overflow:hidden">
+       <div class="entity-field">
+         <div class="entity-fieldlabel"><%= t.aplicable_model_aspects.form.model.label %></div> 
+         <div class="entity-fieldvalue"><span class="entity-id"><%%= entity.id %></span></div> 
+       </div>
+     </div>
+
+</script>
+
+<!-- Renders the form to edit an element -->
+
+<script type="text/tmpl" id="element_template_form">
+              
+     <form name="element">
+        
+        <div class="form-fields">        
+          <div class="formrow">
+            <label for="id" class="fieldtitle">Model <span class="mandatoryfield">*</span></label>
+            <input type="text" maxlength="20" id="id" name="id" class="fieldcontrol" <%% if (entity) { %> value="<%%= entity.id %>" <%% } %> />
+          </div>                
+        </div>
+     
+        <%% if (entity) { %>
+          <%= edit_element_form %>
+        <%% } else { %>
+          <%= new_element_form %>
+        <%% } %> 
+
+        <div class="bottom-navigation-bar navigation-bar">
+             <div class="navigation-bar-nav-buttons">
+                <input type="button" class="cancel-entity-button action-button entity-management-button" value="<%= t.entitymanagement.cancel%>"/>
+                <%% if (entity) { %>
+                  <input type="submit" class="update-entity-button action-button entity-management-button" value="<%= t.entitymanagement.update%>"/>
+                <%% } else { %>
+                  <input type="submit" class="create-entity-button action-button entity-management-button" value="<%= t.entitymanagement.create%>"/>
+                <%% } %>
+             </div>
+        </div>
+     
+     </form>
+     
+</script>
+
+<%= element_form_extension %>
+
+<script type="text/javascript">
+ 
+require(['jquery', 'YSDEntityManagement', 'YSDEntityManagementComplementHooks', 'YSDRemoteDataSource', 'YSDListSelector'], function($, EntityManagement, EntityManagementComplementHooks, RemoteDataSource, ListSelector) {
+
+  function EntityInfoHook() {
+ 	   
+    this.entityKey = function(entity) {
+      return entity.id;
+    }
+
+    this.onRenderEntities = function(entities) {    
+      $('.new-entity-button').hide();
+    }  
+
+    this.onEdit = function(entity) {
+      $('#id').attr('readonly', true);
+    };
+  
+    this.adaptFormData = function(data) {  	
+      data.aspects = this.adaptAspects(data.aspects, data.id);
+      return data;	
+    }
+    
+    this.adaptAspects = function(aspects, entity) { /* It converts from an array of string (each is an aspect) to an array of ContentTypeAspect */
+      
+      if (!(aspects instanceof Array)) {
+        aspects = [aspects];
+      }
+
+      return aspects.map(function(value, index, array) {
+
+         return { aspect : value,
+                  target_model : entity
+                };   
+
+      });
+
+    }
+
+  	  	
+  };
+  
+  var urls = { 
+  	           query_url  : '/models',
+    	         create_url : '/model',
+  	           update_url : '/model',
+  	           delete_url : '/model',
+  	           get_url    : '/model'
+  	         };
+
+  var entityInfoHook = new EntityInfoHook();
+
+  var hooks = [entityInfoHook];
+  
+  // Add the complement hooks
+  hooks = hooks.concat(EntityManagementComplementHooks.complements);
+
+  var entityInfoManager = new EntityManagement(urls, 'entity info', 12, hooks);
+   
+});
+</script>

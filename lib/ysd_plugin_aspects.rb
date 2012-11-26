@@ -1,0 +1,5 @@
+require 'sinatra/ysd_sinatra_applicable_model_aspects'
+require 'sinatra/ysd_sinatra_applicable_model_aspects_rest_api'
+require 'ysd_plugin_aspects_extension'
+
+require 'ysd_plugin_aspects_init'

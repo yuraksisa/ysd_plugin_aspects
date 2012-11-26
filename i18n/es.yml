@@ -1,0 +1,47 @@
+configuration_admin_menu:
+  extensions: 
+    title: Extensiones
+    aspects: Aspectos
+#
+# Aspectos guiblock
+#
+aspects:
+  form:
+    title: Aspectos
+#
+# Aplicable model aspects (entities)
+#
+aplicable_model_aspects:
+  title: Entidades a las que se puede aplicar aspectos
+  description: >
+               <p>Las entidades que se muestran a continuación aceptan aspectos. 
+               Puede escoger qué aspectos se aplicarán a cada entitat y configurar su comportamiento.</p>
+  table:
+    model:
+      label: Entidad
+  form: 
+    model:
+      label: Entidad    
+#
+# Model aspect configuration
+#    
+model_aspect_configuration:
+  form:
+    entity: Entidad
+    em_render: Gestión
+    render: Vista
+    configuration: Configuración
+    show_on_new:
+      label: Mostrar en la creación
+    show_on_edit:
+      label: Mostrar en la edición
+    show_on_view:
+      label: Mostrar en la ficha
+    weight:
+      label: Peso
+    in_group:
+      label: Agrupado
+    rb_yes:
+      label: Si
+    rb_no:
+      label: No

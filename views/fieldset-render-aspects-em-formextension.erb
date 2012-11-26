@@ -1,0 +1,165 @@
+<script id="aspects_list_tmpl" type="text/tmpl">
+           <table class="table">
+               <thead class="table-header">
+                  <tr>
+                    <th class="table-header-title" width="20%"><%=t.aspects.form.aspect_aspect.label%></th>
+                    <th class="table-header-title" width="40%"><%=t.aspects.form.aspect_weight.label%></th>
+                    <th class="table-header-title" width="40%"><%=t.aspects.form.aspect_render_weight.label%></th>
+                    <th class="table-header-title" width="20%"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <%% for (var idx=0;idx<aspects.length;idx++) {%>
+                    <tr class="table-row">
+                      <td class="table-cell"><%%=aspects[idx].aspect%></td>
+                      <td class="table-cell"><%%=aspects[idx].weight%></td>
+                      <td class="table-cell"><%%=aspects[idx].render_weight%></td>
+                      <td class="table-cell"><a rel="<%=prefix%>/<%%=model%>/aspect/<%%=aspects[idx].aspect%>?layout=no" class="aspect_link link"><img class="icon" src="/assets/img/icomoon/cog.png"></a></td>
+                    </tr>
+                  <%% } %>
+                </tbody>
+           </table>
+
+</script>
+
+<script type="text/javascript">
+
+require(['jquery', 'YSDEntityManagementComplementHooks', 'YSDRemoteDataSource', 'YSDListSelector', 'YSDStyles', 'ysdtemplate', 'underscore', 'jquery.ui'],
+        function($, EntityManagementComplementHooks, RemoteDataSource, ListSelector, YSDStyles, tmpl) {
+
+  /* ------------------------------------------------
+     Plugin for aspects
+     ------------------------------------------------ */
+  AspectsHookPlugin = function() {
+	  
+    this.entity = null;
+    this.model  = <% if model %>'<%=model%>'<% else %>null<% end %>; /* The model */
+    this.aspectModel = null;
+
+    this.onEdit = function(entity) {
+      this.entity = entity;
+      this.aspectModel = entity.id;
+      this.configForm(entity);
+    };
+  
+    this.onNew = function() {
+      this.configForm(null);
+    }
+
+    this.configForm = function(entity) {
+       
+       var self = this;
+       $('input[name=id]').bind('blur', function() {
+          self.aspectModel = $(this).val();
+       });
+
+       $('#aspect_configuration').dialog({title: 'Aspect configuration', width: 480, height: 480, autoOpen: false})
+
+       // Load the existing aspects
+       if (entity) {
+         this.loadAspects(entity.aspects);
+       }
+   
+       // Configure the aspects
+       var dataSource = new RemoteDataSource('/aspects/' + (this.model || this.aspectModel));
+       var value = [];      
+       if (entity && entity.aspects) {
+          value = entity.aspects.map(function(value, index, array) {
+            return value.aspect;
+          });
+       }
+       var selector = new ListSelector('aspects_container', 'aspects', dataSource, value );
+       
+       // Configure the aspects configuration
+       $('#aspects_config').bind('click', function() {
+         $('#aspects_management').show();
+         $('.aspects_management_toolbar .close').bind('click', function() {
+           $('#aspects_management').hide();
+           //
+           var entity_aspects = null;
+           if (self.entity) {
+             entity_aspects = self.entity.aspects;
+           }
+           // Obtiene los aspectos seleccionados
+           var aspects=[];
+           var selected_aspects = $('input[name=aspects]:checked');
+           var length = selected_aspects.length;
+           var aspect = null;
+           var aspect_id = null;
+           for (var idx=0;idx<length;idx++) {
+              aspect_id = selected_aspects[idx].getAttribute('value');              
+              aspect = self.getAspect(entity_aspects, aspect_id);
+              if (!aspect) {
+                aspect = {};
+                aspect.aspect = aspect_id;
+                aspect.weight = 0;
+                aspect.render_weight = 0;
+              }
+              aspects.push(aspect);
+              aspects = aspects.sort(function(a,b) {return a.weight - b.weight; });
+           } 
+           self.loadAspects(aspects);
+         });
+       });
+
+    }
+
+    this.getAspect = function(aspects, aspect_id) {
+      
+      if (!aspects){
+        return null;
+      }
+       
+      var aspect = null;
+
+      for (var idx=0; idx<aspects.length; idx++) {
+         if (aspects[idx].aspect == aspect_id) {
+           aspect = aspects[idx];
+           break;
+         }
+      }
+
+      return aspect;
+    }
+    
+    this.loadAspects = function(aspects) {
+
+      $('#aspects_list').html(tmpl('aspects_list_tmpl')({aspects: aspects, model: this.aspectModel})); // Load the aspects
+
+      var self = this;
+      $('.aspect_link').bind('click',
+               function() {                   
+                 var url = $(this).attr('rel');
+                 self.openAspectConfiguration(url);
+               });                 
+
+    }
+
+    this.openAspectConfiguration = function(url) {
+
+      $('#aspect_configuration').bind('load', function() {
+        $('#aspect_configuration').unbind('load'); // To avoid cycling event management
+        window.aspect_configuration.document.getElementsByTagName('body')[0].style.minWidth=0;
+        $('#aspect_configuration').css('display','block');
+        $('#aspect_configuration').width(Math.min(screen.width, 720));
+        $('#aspect_configuration').height(480); 
+        $('#aspect_configuration').dialog('option', 'width', $('#aspect_configuration').width() + 20);
+        $('#aspect_configuration').dialog('option', 'height', $('#aspect_configuration').height() + 20);
+        $('#aspect_configuration').dialog('open');
+        $('#aspect_configuration').width(Math.min(screen.width, 720));
+        $('#aspect_configuration').height(480);
+        $('#aspect_configuration').focus();
+      });
+      
+      $('#aspect_configuration').attr('src', url);
+
+    }
+
+  }
+	
+  var pluginAspects = new AspectsHookPlugin();
+  EntityManagementComplementHooks.register(pluginAspects);	
+
+});
+        
+</script>

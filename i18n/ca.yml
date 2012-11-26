@@ -1,0 +1,46 @@
+configuration_admin_menu:
+  extensions: 
+    title: Extensions
+    aspects: Aspectes
+#
+# Aspects guiblock
+#
+aspects:
+  form:
+    title: Aspectes 
+#
+# Aplicable model aspects (entities) 
+#
+aplicable_model_aspects:
+  title: Entitats que accepten aspects
+  description: >
+               <p>Les següents entitats accepten aspectes. Es poden escollir i configurar els aspectes per cadascuna de les entitats.</p>
+  table:
+    model:
+      label: Entitat
+  form: 
+    model:
+      label: Entitat
+#
+# Model aspect configuration
+#    
+model_aspect_configuration:
+  form:
+    entity: Entitat
+    em_render: Gestió
+    render: Vista
+    configuration: Configuració
+    show_on_new:
+      label: Mostrar en el procès de creació
+    show_on_edit:
+      label: Mostrar en l\'edició
+    show_on_view:
+      label: Mostrar en la fitxa
+    weight:
+      label: Pes
+    in_group:
+      label: Agrupat
+    rb_yes:
+      label: Si
+    rb_no:
+      label: No
