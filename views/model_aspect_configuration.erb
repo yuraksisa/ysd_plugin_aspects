@@ -127,7 +127,7 @@
 
 <script type="text/javascript">
 
-require(['YSDEntityManagement', 'YSDMemoryDataSource', 'YSDSelectSelector', 'jquery', 'jquery.ui'], function(EntityManagement, MemoryDataSource, SelectSelector, $) {
+require(['YSDEntityManagement', 'YSDEntityManagementComplementHooks', 'YSDMemoryDataSource', 'YSDSelectSelector', 'jquery', 'jquery.ui'], function(EntityManagement, EntityManagementComplementHooks, MemoryDataSource, SelectSelector, $) {
  
   function AspectConfigurationHook() {
  	   
@@ -172,7 +172,13 @@ require(['YSDEntityManagement', 'YSDMemoryDataSource', 'YSDSelectSelector', 'jqu
   	         };
 
   var aspectConfigurationHook = new AspectConfigurationHook();
-  var aspectConfigurationManager = new EntityManagement(urls, 'aspect configuration', 1, aspectConfigurationHook,
+
+  var hooks = [aspectConfigurationHook];
+  
+  // Add the complement hooks
+  hooks = hooks.concat(EntityManagementComplementHooks.complements);
+
+  var aspectConfigurationManager = new EntityManagement(urls, 'aspect configuration', 1, hooks,
            {url_base: '<%=url_base%>', action: 'edit', hold_form_after_action: true}); 
    
 });

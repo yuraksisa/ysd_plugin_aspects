@@ -1,10 +1,10 @@
 <script id="aspects_list_tmpl" type="text/tmpl">
-           <table class="table">
+    <div>
+      <div id="configured_aspects" style="width:30%; display:inline-block">
+          <table class="table">
                <thead class="table-header">
                   <tr>
-                    <th class="table-header-title" width="20%"><%=t.aspects.form.aspect_aspect.label%></th>
-                    <th class="table-header-title" width="40%"><%=t.aspects.form.aspect_weight.label%></th>
-                    <th class="table-header-title" width="40%"><%=t.aspects.form.aspect_render_weight.label%></th>
+                    <th class="table-header-title" width="80%"><%=t.aspects.form.aspect_aspect.label%></th>
                     <th class="table-header-title" width="20%"></th>
                   </tr>
                 </thead>
@@ -12,15 +12,37 @@
                   <%% for (var idx=0;idx<aspects.length;idx++) {%>
                     <tr class="table-row">
                       <td class="table-cell"><%%=aspects[idx].aspect%></td>
-                      <td class="table-cell"><%%=aspects[idx].weight%></td>
-                      <td class="table-cell"><%%=aspects[idx].render_weight%></td>
                       <td class="table-cell"><a rel="<%=prefix%>/<%%=model%>/aspect/<%%=aspects[idx].aspect%>?layout=no" class="aspect_link link"><img class="icon" src="/assets/img/icomoon/cog.png"></a></td>
                     </tr>
                   <%% } %>
                 </tbody>
-           </table>
+           </table>                
+      </div>
+      <div id="aspects_on_management" style="width:30%; display:inline-block" class="guiblock">
+         <div class="guiblock-title">Management</div>
+         <ul id="aspects_list_on_management" class="sortable">
+            <%% for (var idx=0;idx<aspects.length;idx++) {%>
+              <li class="ui-state-default" rel="<%%=aspects[idx].weight%>"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><%%=aspects[idx].aspect%></li>
+            <%% } %>  
+         </ul>
+      </div>
+      <div id="aspects_on_render" style="width:30%; display:inline-block" class="guiblock"> 
+         <div class="guiblock-title">Render</div>
+         <ul id="aspects_list_on_render" class="sortable">
+            <%% for (var idx=0;idx<render_aspects.length;idx++) {%>
+              <li class="ui-state-default" rel="<%%=render_aspects[idx].render_weight%>"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><%%=render_aspects[idx].aspect%></li>
+            <%% } %>  
+         </ul>
+      </div>
+    </div>
 
 </script>
+
+<style>
+    .sortable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
+    .sortable li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1.2em; height: 15px; }
+    .sortable li span { position: absolute; margin-left: -1.3em; }
+</style>
 
 <script type="text/javascript">
 
@@ -30,11 +52,120 @@ require(['jquery', 'YSDEntityManagementComplementHooks', 'YSDRemoteDataSource', 
   /* ------------------------------------------------
      Plugin for aspects
      ------------------------------------------------ */
+
+  Aspects = function(aspects) {
+
+    this.aspects = []; /* An array of objects which represents the aspects */
+
+    if (aspects) {
+      this.aspects = this.aspects.concat(aspects);
+    }
+
+    this.getAspect = function(aspect_id) { /* Get a concrete aspects */
+      var aspect = null; 
+      for (var idx=0; idx<this.aspects.length; idx++) {
+         if (this.aspects[idx].aspect == aspect_id) {
+           aspect = this.aspects[idx];
+           break;
+         }
+      }
+      return aspect;
+    }
+
+    this.updateAspects = function(newAspects) {
+
+      var tmp = [];
+
+      var length = newAspects.length;        
+      var aspect = null;
+
+      for (var idx=0;idx<length;idx++) { 
+        aspect = this.getAspect(newAspects[idx]);
+        if (!aspect) {
+           aspect = {};
+           aspect.aspect = newAspects[idx];
+           aspect.weight = -1;
+           aspect.render_weight = -1;
+        }
+        tmp.push(aspect);
+      }
+
+      this.aspects = tmp; 
+
+      console.log(aspects);
+
+    }
+
+    this.setOrder = function(sortedAspects, isManagement) {
+
+      var items_length = sortedAspects.length;
+          
+      var aspect = null;
+      var currentWeight = 0;
+
+      for (var i=0; i<items_length;i++) {
+        if (aspect = this.getAspect(sortedAspects[i])) {
+          currentWeight =  -1 * items_length + i - 1;
+          if (isManagement) {
+            aspect.weight = currentWeight;
+          }
+          else {
+            aspect.render_weight = currentWeight;
+          }
+        }
+      }
+     
+      console.log(aspects);
+
+    }
+
+    this.getPreparedAspects = function() {
+
+      var result = [];
+      var resultItem = null;
+
+      for (var idx=0; idx<this.aspects.length; idx++) {
+
+        resultItem = {};
+        for (property in this.aspects[idx]) {
+          if (property == 'content_type_id') {
+            resultItem.content_type = {'id': this.aspects[idx].content_type_id};
+          }
+          else {
+            resultItem[property] = this.aspects[idx][property];
+          }
+        }
+        result.push(resultItem);
+      }
+
+      return result;
+
+    }
+
+    this.getManagementAspects = function() {
+      var copy = [];
+      copy = copy.concat(this.aspects);
+      copy.sort(function(a,b) {return a.weight - b.weight; });
+
+      return copy;
+    }
+
+    this.getRenderAspects = function() {
+      var copy = [];
+      copy = copy.concat(this.aspects);
+      copy.sort(function(a,b) {return a.render_weight - b.render_weight; });
+
+      return copy;
+    }
+  
+  }
+
   AspectsHookPlugin = function() {
 	  
     this.entity = null;
     this.model  = <% if model %>'<%=model%>'<% else %>null<% end %>; /* The model */
     this.aspectModel = null;
+    this.entityAspects = null;
 
     this.onEdit = function(entity) {
       this.entity = entity;
@@ -46,21 +177,32 @@ require(['jquery', 'YSDEntityManagementComplementHooks', 'YSDRemoteDataSource', 
       this.configForm(null);
     }
 
+    this.adaptFormData = function(data) {
+      
+      data.aspects = this.entityAspects.getPreparedAspects();
+      return data;
+
+    }
+
     this.configForm = function(entity) {
        
        var self = this;
+
        $('input[name=id]').bind('blur', function() {
           self.aspectModel = $(this).val();
        });
 
        $('#aspect_configuration').dialog({title: 'Aspect configuration', width: 480, height: 480, autoOpen: false})
 
-       // Load the existing aspects
        if (entity) {
-         this.loadAspects(entity.aspects);
+         this.entityAspects = new Aspects(entity.aspects);
+         this.loadAspects();
+       }
+       else {
+         this.entityAspects = new Aspects();
        }
    
-       // Configure the aspects
+       // Configure the aspects control
        var dataSource = new RemoteDataSource('/aspects/' + (this.model || this.aspectModel));
        var value = [];      
        if (entity && entity.aspects) {
@@ -70,68 +212,57 @@ require(['jquery', 'YSDEntityManagementComplementHooks', 'YSDRemoteDataSource', 
        }
        var selector = new ListSelector('aspects_container', 'aspects', dataSource, value );
        
-       // Configure the aspects configuration
        $('#aspects_config').bind('click', function() {
          $('#aspects_management').show();
          $('.aspects_management_toolbar .close').bind('click', function() {
            $('#aspects_management').hide();
-           //
-           var entity_aspects = null;
-           if (self.entity) {
-             entity_aspects = self.entity.aspects;
-           }
            // Obtiene los aspectos seleccionados
-           var aspects=[];
-           var selected_aspects = $('input[name=aspects]:checked');
-           var length = selected_aspects.length;
-           var aspect = null;
-           var aspect_id = null;
-           for (var idx=0;idx<length;idx++) {
-              aspect_id = selected_aspects[idx].getAttribute('value');              
-              aspect = self.getAspect(entity_aspects, aspect_id);
-              if (!aspect) {
-                aspect = {};
-                aspect.aspect = aspect_id;
-                aspect.weight = 0;
-                aspect.render_weight = 0;
-              }
-              aspects.push(aspect);
-              aspects = aspects.sort(function(a,b) {return a.weight - b.weight; });
-           } 
-           self.loadAspects(aspects);
+           var aspects = $('input[name=aspects]:checked').map(function(value, index, array) {
+             return index.getAttribute('value');
+           });
+           self.entityAspects.updateAspects(aspects); // $('input[name=aspects]:checked')
+           self.loadAspects();
          });
        });
 
     }
 
-    this.getAspect = function(aspects, aspect_id) {
-      
-      if (!aspects){
-        return null;
-      }
-       
-      var aspect = null;
-
-      for (var idx=0; idx<aspects.length; idx++) {
-         if (aspects[idx].aspect == aspect_id) {
-           aspect = aspects[idx];
-           break;
-         }
-      }
-
-      return aspect;
-    }
-    
-    this.loadAspects = function(aspects) {
-
-      $('#aspects_list').html(tmpl('aspects_list_tmpl')({aspects: aspects, model: this.aspectModel})); // Load the aspects
+    this.loadAspects = function() {
 
       var self = this;
+      
+      var aspects = this.entityAspects.getManagementAspects();
+      var render_aspects = this.entityAspects.getRenderAspects();
+
+      $('#aspects_list').html(tmpl('aspects_list_tmpl')({aspects: aspects,
+                                                         render_aspects: render_aspects, 
+                                                         model: this.aspectModel})); 
+      
+      // Configure sortable elements
+      $('.sortable').sortable({
+        stop: function( event, ui ) {
+          self.updateSortedAspects(ui.item[0].parentNode);
+        }         
+      });
+      $('.sortable').disableSelection();
+      
+      // Configure the aspect link
       $('.aspect_link').bind('click',
                function() {                   
                  var url = $(this).attr('rel');
                  self.openAspectConfiguration(url);
                });                 
+
+    }
+
+    this.updateSortedAspects = function(parentNode) {
+      
+      var orderedItems = [];
+      for (var idx=0;idx<parentNode.children.length;idx++) {
+        orderedItems.push(parentNode.children[idx].innerText);
+      }
+
+      this.entityAspects.setOrder(orderedItems, parentNode.id == 'aspects_list_on_management');
 
     }
 
@@ -156,6 +287,7 @@ require(['jquery', 'YSDEntityManagementComplementHooks', 'YSDRemoteDataSource', 
     }
 
   }
+
 	
   var pluginAspects = new AspectsHookPlugin();
   EntityManagementComplementHooks.register(pluginAspects);	
