@@ -10,13 +10,10 @@ module Sinatra
     #
     module ApplicableModelAspectsRESTApi
    
-      #
-      #
-      #
       def self.registered(app)
         
         #
-        # Retrieve entities
+        # Retrieve the models to which can be applied aspects
         #
         app.get "/models/?" do
                   
@@ -29,7 +26,7 @@ module Sinatra
         end
       
         #
-        # Retrieve a model
+        # Get a concrete applicable model
         #
         app.get "/model/:model_name" do
         
@@ -43,7 +40,7 @@ module Sinatra
         end
 
         #
-        # Retrieve entities 
+        # Retrieve the models to which can be applied aspects 
         #
         ["/models/?", "/models/page/:page"].each do |path|
          
@@ -61,7 +58,7 @@ module Sinatra
         end
       
         #
-        # Update entity (assign aspects to an entity)
+        # Update a model: aspects assignation
         # 
         app.put "/model" do
         
@@ -80,7 +77,7 @@ module Sinatra
         end
         
         #
-        # Get the entity/aspect configuration attributes
+        # Get a model/aspect configuration attributes
         #
         app.get "/model/:model_name/aspect/:aspect/config" do
                       
@@ -98,7 +95,7 @@ module Sinatra
         end
         
         #
-        # Update the aspect/entity configuration attributes
+        # Update the model/aspect configuration attributes
         #
         app.put "/model/:model_name/aspect/:aspect/config" do
         
@@ -108,13 +105,14 @@ module Sinatra
           if model and model_aspect
             request.body.rewind
             aspect_configuration_request = JSON.parse(URI.unescape(request.body.read)) 
-            aspect_configuration_attributes = aspect_configuration_request.delete('aspect_attributes')
-            Plugins::ConfiguredModelAspect.transaction do |transaction|
-              model_aspect.attributes= aspect_configuration_request
-              model_aspect.save
-              model_aspect.aspect_attributes=aspect_configuration_attributes
-              transaction.commit
+            
+            if aspect_configuration_attributes = aspect_configuration_request['aspect_attributes']
+              Plugins::ConfiguredModelAspect.transaction do |transaction|
+                model_aspect.aspect_attributes=aspect_configuration_attributes
+                transaction.commit
+              end
             end
+
             status 200
             content_type :json
             model_aspect.to_json

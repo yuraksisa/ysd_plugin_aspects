@@ -15,10 +15,8 @@ module Sinatra
         app.settings.views = Array(app.settings.views).push(File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'views')))
         app.settings.translations = Array(app.settings.translations).push(File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'i18n')))       
         
-        #
-        # Configure the aspects which can be applied to the models
-        #
-        # This page shows all Plugins::ApplicableModelAspect entities and permit to set and configure aspects
+        # 
+        # Show the models to which can be applied aspects
         #
         app.get "/model-aspects/?*" do
           
@@ -26,22 +24,20 @@ module Sinatra
 
           aspects = []
           aspects << UI::GuiBlockEntityAspectAdapter.new(GuiBlock::Aspects.new('/model'), 99, false, true, true, false, 100, true) 
-          aspects_render=UI::EntityManagementAspectRender.new(context, aspects) 
           
-          locals = aspects_render.render(content_type)
+          aspects_render=UI::EntityManagementAspectRender.new(context, aspects)           
+          locals = aspects_render.render(nil)
           
           load_em_page(:applicable_model_aspect, nil, false, :locals => locals)
           
         end
         
         #
-        # Model aspects configuration : The configuration of a model aspect
+        # Model aspect configuration page (to set up the aspect attributes)
         #
         app.get "/model/:model_name/aspect/:aspect" do
           
           context = {:app => self}
-    
-          # TODO check that the entity exists and the aspect is set for the entity
               
           model = (Plugins::ModelAspect.registered_models.select do |m| m.target_model == params['model_name'] end).first 
           aspect = model.aspect(params[:aspect]).get_aspect(context)
@@ -55,7 +51,7 @@ module Sinatra
             locals.store(:update_url, "/model/#{params[:model_name]}/aspect/#{params[:aspect]}/config")
             locals.store(:get_url,    "/model/#{params[:model_name]}/aspect/#{params[:aspect]}/config")
             locals.store(:url_base,   "/model/#{params[:model_name]}/aspect/#{params[:aspect]}")
-            #locals.store(:url_destination, "/model-aspects/#{params['model_name']}")
+            locals.store(:url_destination, "/model-aspects/#{params['model_name']}")
             locals.store(:description, "#{params[:aspect]} - #{params[:model_name]}")
                     
             if aspect.gui_block.respond_to?(:config)

@@ -8,6 +8,7 @@ configuration_admin_menu:
 aspects:
   form:
     title: Aspects
+    add_remove_aspects: Add/Remove
 #
 # Aplicable model aspects (entities) 
 #

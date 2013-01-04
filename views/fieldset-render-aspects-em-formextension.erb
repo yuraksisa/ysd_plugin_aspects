@@ -1,138 +1,227 @@
 <script id="aspects_list_tmpl" type="text/tmpl">
     <div>
-      <div id="configured_aspects" style="width:30%; display:inline-block">
+      <div id="configured_aspects" style="width:30%; display:inline-block; vertical-align: top" class="guiblock">
+         <div class="guiblock-title"><%=t.aspects.form.aspect_aspect.label%></div>
           <table class="table">
-               <thead class="table-header">
-                  <tr>
-                    <th class="table-header-title" width="80%"><%=t.aspects.form.aspect_aspect.label%></th>
-                    <th class="table-header-title" width="20%"></th>
-                  </tr>
-                </thead>
                 <tbody>
                   <%% for (var idx=0;idx<aspects.length;idx++) {%>
                     <tr class="table-row">
                       <td class="table-cell"><%%=aspects[idx].aspect%></td>
-                      <td class="table-cell"><a rel="<%=prefix%>/<%%=model%>/aspect/<%%=aspects[idx].aspect%>?layout=no" class="aspect_link link"><img class="icon" src="/assets/img/icomoon/cog.png"></a></td>
+                      <td class="table-cell">
+                        <%% if (Object.keys(aspects[idx].aspect_attributes).length > 0) { %>
+                        <a rel="<%=prefix%>/<%%=model%>/aspect/<%%=aspects[idx].aspect%>" class="aspect_link link">
+                          <img class="icon" src="/assets/img/icomoon/cog.png">
+                        </a>
+                        <%% } %>
+                      </td>
                     </tr>
                   <%% } %>
                 </tbody>
-           </table>                
+           </table> 
+           <div class="formrow-botonera" style="margin-top:5px">
+             <div id="aspects_config" class="form-button"><a><%=t.aspects.form.add_remove_aspects%></a></div>
+           </div>               
       </div>
-      <div id="aspects_on_management" style="width:30%; display:inline-block" class="guiblock">
+      <div id="aspects_on_management" style="width:30%; display:inline-block; vertical-align: top" class="guiblock">
          <div class="guiblock-title">Management</div>
          <ul id="aspects_list_on_management" class="sortable">
-            <%% for (var idx=0;idx<aspects.length;idx++) {%>
-              <li class="ui-state-default" rel="<%%=aspects[idx].weight%>"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><%%=aspects[idx].aspect%></li>
+            <%% for (var idx=0;idx<edit_aspects.length;idx++) {%>
+              <%% if (edit_aspects[idx].name == 'NON-ASPECT') { %>
+              <li class="ui-state-default ui-state-disabled" rel="<%%=edit_aspects[idx].weight%>" data-aspect="NON-ASPECT">
+                body
+              </li>
+              <%% } else { %>
+                <li class="ui-state-default" rel="<%%=edit_aspects[idx].weight%>" data-aspect="<%%=edit_aspects[idx].aspect%>">
+                  <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+                  <%%=edit_aspects[idx].aspect%>
+                  <div class="aspect_management_configuration">
+                     <div class="aspect_edit aspect_configuration <%%if (edit_aspects[idx].show_on_edit){%>aspect_configuration_on<%%}%>" data-aspect="<%%=edit_aspects[idx].aspect%>">edit</div>
+                     <div class="aspect_new aspect_configuration <%%if (edit_aspects[idx].show_on_new){%>aspect_configuration_on<%%}%>" data-aspect="<%%=edit_aspects[idx].aspect%>">new</div>
+                     <div class="aspect_in_group aspect_configuration <%%if (edit_aspects[idx].in_group){%>aspect_configuration_on<%%}%>" data-aspect="<%%=edit_aspects[idx].aspect%>">group</div>
+                  </div>
+                </li>
+              <%% } %>
             <%% } %>  
          </ul>
       </div>
-      <div id="aspects_on_render" style="width:30%; display:inline-block" class="guiblock"> 
+      <div id="aspects_on_render" style="width:30%; display:inline-block; vertical-align: top" class="guiblock"> 
          <div class="guiblock-title">Render</div>
          <ul id="aspects_list_on_render" class="sortable">
             <%% for (var idx=0;idx<render_aspects.length;idx++) {%>
-              <li class="ui-state-default" rel="<%%=render_aspects[idx].render_weight%>"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><%%=render_aspects[idx].aspect%></li>
+              <%% if (render_aspects[idx].name == 'NON-ASPECT') { %>
+              <li class="ui-state-default ui-state-disabled" rel="<%%=render_aspects[idx].render_weight%>" data-aspect="NON-ASPECT">
+                body
+              </li>
+              <%% } else { %>
+              <li class="ui-state-default" rel="<%%=render_aspects[idx].render_weight%>" data-aspect="<%%=render_aspects[idx].aspect%>">
+                 <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+                 <%%=render_aspects[idx].aspect%>
+                 <div class="aspect_render_configuration">
+                   <div class="aspect_render_in_group aspect_configuration <%%if (render_aspects[idx].render_in_group){%>aspect_configuration_on<%%}%>" data-aspect="<%%=render_aspects[idx].aspect%>">group</div>
+                 </div>
+              </li>
+              <%% } %>
             <%% } %>  
          </ul>
       </div>
     </div>
-
 </script>
 
 <style>
-    .sortable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
-    .sortable li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1.2em; height: 15px; }
-    .sortable li span { position: absolute; margin-left: -1.3em; }
+    .sortable { list-style-type: none; 
+                margin: 0; 
+                padding: 0; }
+    .sortable li { margin: 0 3px 3px 3px; 
+                   font-size: 0.8em;
+                   padding: 0.4em 0.4em 0.5em 1.5em;
+                  }
+    .sortable li span { 
+                   position: absolute; 
+                   margin-left: -1.3em; }
+    
+    .aspect_management_configuration {
+      border-top: 1px dashed #DDD;
+      color: gray;
+      padding-top: 2px;
+    }
+    
+    .aspect_render_configuration {
+      border-top: 1px dashed #DDD;
+      color: gray;
+      padding-top: 2px;
+    }
+
+    .aspect_configuration {
+      cursor: hand;
+      cursor: pointer;
+      display: inline-block;
+      margin-left: 1em;
+      color: gray;
+      padding: 2px;
+      text-decoration: line-through;
+    }
+    .aspect_configuration_on {
+      color: black;
+      border: 1px solid #DDD;
+      border-radius: 5px;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      text-decoration: none;
+    }
 </style>
 
 <script type="text/javascript">
 
-require(['jquery', 'YSDEntityManagementComplementHooks', 'YSDRemoteDataSource', 'YSDListSelector', 'YSDStyles', 'ysdtemplate', 'underscore', 'jquery.ui'],
+require(['jquery', 'YSDEntityManagementComplementHooks', 'YSDRemoteDataSource', 'YSDListSelector', 'YSDStyles', 'ysdtemplate', 'underscore', 'jquery.ui', 'YSDjson2'],
         function($, EntityManagementComplementHooks, RemoteDataSource, ListSelector, YSDStyles, tmpl) {
 
   /* ------------------------------------------------
      Plugin for aspects
      ------------------------------------------------ */
 
-  Aspects = function(aspects) {
+  EntityAspects = function(entityAspects) { /* It manages the aspects of the entity */
 
-    this.aspects = []; /* An array of objects which represents the aspects */
+    this.entityAspects = []; /* An array of objects which represents the aspects */
+    this.aspects = [];
 
-    if (aspects) {
-      this.aspects = this.aspects.concat(aspects);
+    if (entityAspects) {
+      this.entityAspects = this.entityAspects.concat(entityAspects);
     }
 
-    this.getAspect = function(aspect_id) { /* Get a concrete aspects */
-      var aspect = null; 
-      for (var idx=0; idx<this.aspects.length; idx++) {
-         if (this.aspects[idx].aspect == aspect_id) {
+    this.setAspects = function(data) {
+      this.aspects = data;
+    }
+
+    this.getAspect = function(aspect_id) { /* Get the aspect */
+       var aspect = null;
+       for (var idx=0; idx<this.aspects.length; idx++) {
+         if (this.aspects[idx].id == aspect_id) {
            aspect = this.aspects[idx];
            break;
          }
-      }
-      return aspect;
+       }
+       return aspect;
     }
 
-    this.updateAspects = function(newAspects) {
+    this.getEntityAspect = function(aspect_id) { /* Get the entity aspect that matches the aspect */
+      var entityAspect = null; 
+      for (var idx=0; idx<this.entityAspects.length; idx++) {
+         if (this.entityAspects[idx].aspect == aspect_id) {
+           entityAspect = this.entityAspects[idx];
+           break;
+         }
+      }
+      return entityAspect;
+    }
+
+    this.updateEntityAspects = function(newAspects) {
 
       var tmp = [];
 
       var length = newAspects.length;        
+      var entityAspect = null;
       var aspect = null;
 
       for (var idx=0;idx<length;idx++) { 
-        aspect = this.getAspect(newAspects[idx]);
-        if (!aspect) {
-           aspect = {};
-           aspect.aspect = newAspects[idx];
-           aspect.weight = -1;
-           aspect.render_weight = -1;
+        entityAspect = this.getEntityAspect(newAspects[idx]);
+        if (!entityAspect) {
+           aspect = this.getAspect(newAspects[idx]);
+           entityAspect = {};
+           entityAspect.aspect_attributes = aspect.configuration_attributes;
+           entityAspect.aspect = newAspects[idx];
+           entityAspect.weight = -1;
+           entityAspect.render_weight = 1;
         }
-        tmp.push(aspect);
+        tmp.push(entityAspect);
       }
 
-      this.aspects = tmp; 
-
-      console.log(aspects);
+      this.entityAspects = tmp; 
 
     }
 
-    this.setOrder = function(sortedAspects, isManagement) {
+    this.sortEntityAspects = function(sortedAspects, isManagement) {
 
       var items_length = sortedAspects.length;
           
-      var aspect = null;
+      var entityAspect = null;
       var currentWeight = 0;
+      
+      var factor = -1;
 
       for (var i=0; i<items_length;i++) {
-        if (aspect = this.getAspect(sortedAspects[i])) {
-          currentWeight =  -1 * items_length + i - 1;
+
+        if (sortedAspects[i] == 'NON-ASPECT') {
+          factor = 1;
+          continue;
+        }
+
+        if (entityAspect = this.getEntityAspect(sortedAspects[i])) {
+          currentWeight =  (factor * items_length) + i - 1;
           if (isManagement) {
-            aspect.weight = currentWeight;
+            entityAspect.weight = currentWeight;
           }
           else {
-            aspect.render_weight = currentWeight;
+            entityAspect.render_weight = currentWeight;
           }
         }
+
       }
      
-      console.log(aspects);
-
     }
 
-    this.getPreparedAspects = function() {
+    this.getPreparedAspects = function() { /* Return the entity aspects prepared to update the backend */
 
       var result = [];
       var resultItem = null;
 
-      for (var idx=0; idx<this.aspects.length; idx++) {
-
+      for (var idx=0; idx<this.entityAspects.length; idx++) {
         resultItem = {};
-        for (property in this.aspects[idx]) {
+        for (property in this.entityAspects[idx]) {
           if (property == 'content_type_id') {
-            resultItem.content_type = {'id': this.aspects[idx].content_type_id};
+            resultItem.content_type = {'id': this.entityAspects[idx].content_type_id};
           }
           else {
-            resultItem[property] = this.aspects[idx][property];
+            resultItem[property] = this.entityAspects[idx][property];
           }
         }
         result.push(resultItem);
@@ -144,7 +233,17 @@ require(['jquery', 'YSDEntityManagementComplementHooks', 'YSDRemoteDataSource', 
 
     this.getManagementAspects = function() {
       var copy = [];
-      copy = copy.concat(this.aspects);
+
+      for (var idx=0;idx<this.entityAspects.length; idx++) {
+        if (aspect=this.getAspect(this.entityAspects[idx].aspect)) {
+           if (aspect.affects_edit) {
+              copy.push(this.entityAspects[idx]);
+           }
+        }
+      }
+      
+      copy.push({name:'NON-ASPECT', weight:0});
+
       copy.sort(function(a,b) {return a.weight - b.weight; });
 
       return copy;
@@ -152,7 +251,17 @@ require(['jquery', 'YSDEntityManagementComplementHooks', 'YSDRemoteDataSource', 
 
     this.getRenderAspects = function() {
       var copy = [];
-      copy = copy.concat(this.aspects);
+
+      for (var idx=0;idx<this.entityAspects.length; idx++) {
+        if (aspect=this.getAspect(this.entityAspects[idx].aspect)) {
+           if (aspect.affects_render) {
+              copy.push(this.entityAspects[idx]);
+           }
+        }
+      }
+
+      copy.push({name: 'NON-ASPECT', render_weight: 0});
+
       copy.sort(function(a,b) {return a.render_weight - b.render_weight; });
 
       return copy;
@@ -177,11 +286,9 @@ require(['jquery', 'YSDEntityManagementComplementHooks', 'YSDRemoteDataSource', 
       this.configForm(null);
     }
 
-    this.adaptFormData = function(data) {
-      
+    this.adaptFormData = function(data) {      
       data.aspects = this.entityAspects.getPreparedAspects();
       return data;
-
     }
 
     this.configForm = function(entity) {
@@ -192,18 +299,19 @@ require(['jquery', 'YSDEntityManagementComplementHooks', 'YSDRemoteDataSource', 
           self.aspectModel = $(this).val();
        });
 
-       $('#aspect_configuration').dialog({title: 'Aspect configuration', width: 480, height: 480, autoOpen: false})
-
        if (entity) {
-         this.entityAspects = new Aspects(entity.aspects);
-         this.loadAspects();
+         this.entityAspects = new EntityAspects(entity.aspects);
        }
        else {
-         this.entityAspects = new Aspects();
+         this.entityAspects = new EntityAspects();
        }
    
        // Configure the aspects control
        var dataSource = new RemoteDataSource('/aspects/' + (this.model || this.aspectModel));
+       dataSource.addListener('data_available', function(event){
+         self.entityAspects.setAspects(event.data);
+         self.configureAspects();
+       });
        var value = [];      
        if (entity && entity.aspects) {
           value = entity.aspects.map(function(value, index, array) {
@@ -212,29 +320,41 @@ require(['jquery', 'YSDEntityManagementComplementHooks', 'YSDRemoteDataSource', 
        }
        var selector = new ListSelector('aspects_container', 'aspects', dataSource, value );
        
+    }
+
+    this.configureAspects = function() {
+
+       var self = this;
+       this.loadEntityAspects();
+
+       // Configure the aspect add/remove button
        $('#aspects_config').bind('click', function() {
          $('#aspects_management').show();
+         $('#aspects_management').focus();
          $('.aspects_management_toolbar .close').bind('click', function() {
            $('#aspects_management').hide();
            // Obtiene los aspectos seleccionados
            var aspects = $('input[name=aspects]:checked').map(function(value, index, array) {
              return index.getAttribute('value');
            });
-           self.entityAspects.updateAspects(aspects); // $('input[name=aspects]:checked')
-           self.loadAspects();
+           self.entityAspects.updateEntityAspects(aspects);
+           self.loadEntityAspects();
          });
        });
 
     }
 
-    this.loadAspects = function() {
+    this.loadEntityAspects = function() {
 
       var self = this;
       
-      var aspects = this.entityAspects.getManagementAspects();
+      var aspects = this.entityAspects.entityAspects;
+      var edit_aspects = this.entityAspects.getManagementAspects();
       var render_aspects = this.entityAspects.getRenderAspects();
 
-      $('#aspects_list').html(tmpl('aspects_list_tmpl')({aspects: aspects,
+      $('#aspects_list').html(tmpl('aspects_list_tmpl')({hook: this,
+                                                         aspects: aspects,
+                                                         edit_aspects: edit_aspects,
                                                          render_aspects: render_aspects, 
                                                          model: this.aspectModel})); 
       
@@ -253,36 +373,83 @@ require(['jquery', 'YSDEntityManagementComplementHooks', 'YSDRemoteDataSource', 
                  self.openAspectConfiguration(url);
                });                 
 
-    }
+      // Configure the aspect configuration
+      $('.aspect_edit').bind('click',
+          function(){
+            var aspect_id = $(this).attr('data-aspect');
+            var aspect = self.entityAspects.getEntityAspect(aspect_id);
+            if (aspect) {
+              aspect.show_on_edit = !aspect.show_on_edit;
+              if (aspect.show_on_edit) {
+                $(this).addClass('aspect_configuration_on');
+              }
+              else {
+                $(this).removeClass('aspect_configuration_on');
+              }
+            }
+          });
+
+      $('.aspect_new').bind('click',
+          function(){
+            var aspect_id = $(this).attr('data-aspect');
+            var aspect = self.entityAspects.getEntityAspect(aspect_id);
+            if (aspect) {
+              aspect.show_on_new = !aspect.show_on_new;
+              if (aspect.show_on_new) {
+                $(this).addClass('aspect_configuration_on');
+              }
+              else {
+                $(this).removeClass('aspect_configuration_on');
+              }
+            }
+          });
+
+      $('.aspect_in_group').bind('click',
+          function(){
+            var aspect_id = $(this).attr('data-aspect');
+            var aspect = self.entityAspects.getEntityAspect(aspect_id);
+            if (aspect) {
+              aspect.in_group = !aspect.in_group;
+              if (aspect.in_group) {
+                $(this).addClass('aspect_configuration_on');
+              }
+              else {
+                $(this).removeClass('aspect_configuration_on');
+              }
+            }
+          });
+
+      $('.aspect_render_in_group').bind('click',
+          function(){
+            var aspect_id = $(this).attr('data-aspect');
+            var aspect = self.entityAspects.getEntityAspect(aspect_id);
+            if (aspect) {
+              aspect.render_in_group = !aspect.render_in_group;
+              if (aspect.render_in_group) {
+                $(this).addClass('aspect_configuration_on');
+              }
+              else {
+                $(this).removeClass('aspect_configuration_on');
+              }
+            }
+          });      
+
+     }
 
     this.updateSortedAspects = function(parentNode) {
       
       var orderedItems = [];
       for (var idx=0;idx<parentNode.children.length;idx++) {
-        orderedItems.push(parentNode.children[idx].innerText);
+        orderedItems.push($(parentNode.children[idx]).attr('data-aspect'));
       }
 
-      this.entityAspects.setOrder(orderedItems, parentNode.id == 'aspects_list_on_management');
+      this.entityAspects.sortEntityAspects(orderedItems, parentNode.id == 'aspects_list_on_management');
 
     }
 
     this.openAspectConfiguration = function(url) {
-
-      $('#aspect_configuration').bind('load', function() {
-        $('#aspect_configuration').unbind('load'); // To avoid cycling event management
-        window.aspect_configuration.document.getElementsByTagName('body')[0].style.minWidth=0;
-        $('#aspect_configuration').css('display','block');
-        $('#aspect_configuration').width(Math.min(screen.width, 720));
-        $('#aspect_configuration').height(480); 
-        $('#aspect_configuration').dialog('option', 'width', $('#aspect_configuration').width() + 20);
-        $('#aspect_configuration').dialog('option', 'height', $('#aspect_configuration').height() + 20);
-        $('#aspect_configuration').dialog('open');
-        $('#aspect_configuration').width(Math.min(screen.width, 720));
-        $('#aspect_configuration').height(480);
-        $('#aspect_configuration').focus();
-      });
       
-      $('#aspect_configuration').attr('src', url);
+      window.location.href = url;
 
     }
 

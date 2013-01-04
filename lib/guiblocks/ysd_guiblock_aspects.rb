@@ -16,30 +16,6 @@ module GuiBlock
       @model = model
     end
 
-    #def weight
-    #  99
-    #end
-
-    #def in_group
-    #  false
-    #end
-
-    #def show_on_new
-    #  true
-    #end
-
-    #def show_on_edit
-    #  true
-    #end
-
-    #def show_on_view
-    #  false
-    #end
-
-    #def get_aspect_definition(context={})
-    #  return self
-    #end
-
     #
     # Information
     #
@@ -66,7 +42,7 @@ module GuiBlock
       
       renderer = ::UI::FieldSetRender.new('aspects', app)      
       renderer.render('form', 'em')     
-
+    
     end
 
     #
