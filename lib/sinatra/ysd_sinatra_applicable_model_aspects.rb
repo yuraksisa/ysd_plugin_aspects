@@ -23,7 +23,7 @@ module Sinatra
           context = {:app => self}
 
           aspects = []
-          aspects << UI::GuiBlockEntityAspectAdapter.new(GuiBlock::Aspects.new('/model'), 99, false, true, true, false, 100, true) 
+          aspects << UI::GuiBlockEntityAspectAdapter.new(GuiBlock::Aspects.new('/model'), {:weight => 99, :render_in_group => true}) 
           
           aspects_render=UI::EntityManagementAspectRender.new(context, aspects)           
           locals = aspects_render.render(nil)
