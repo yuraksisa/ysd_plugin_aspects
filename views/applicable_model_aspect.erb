@@ -128,11 +128,11 @@ require(['jquery', 'YSDEntityManagement', 'YSDEntityManagementComplementHooks', 
   };
   
   var urls = { 
-  	           query_url  : '/models',
-    	         create_url : '/model',
-  	           update_url : '/model',
-  	           delete_url : '/model',
-  	           get_url    : '/model'
+  	           query_url  : '/api/aspects/models',
+    	         create_url : '/api/aspects/model',
+  	           update_url : '/api/aspects/model',
+  	           delete_url : '/api/aspects/model',
+  	           get_url    : '/api/aspects/model'
   	         };
 
   var entityInfoHook = new EntityInfoHook();
@@ -142,7 +142,7 @@ require(['jquery', 'YSDEntityManagement', 'YSDEntityManagementComplementHooks', 
   // Add the complement hooks
   hooks = hooks.concat(EntityManagementComplementHooks.complements);
 
-  var entityInfoManager = new EntityManagement(urls, 'entity info', 12, hooks);
+  var entityInfoManager = new EntityManagement(urls, 'aspects', 12, hooks, {prefix: '/admin'});
    
 });
 </script>

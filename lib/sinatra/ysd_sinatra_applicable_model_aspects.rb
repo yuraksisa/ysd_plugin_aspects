@@ -18,12 +18,12 @@ module Sinatra
         # 
         # Show the models to which can be applied aspects
         #
-        app.get "/model-aspects/?*" do
+        app.get "/admin/aspects/?*" do
           
           context = {:app => self}
 
           aspects = []
-          aspects << UI::GuiBlockEntityAspectAdapter.new(GuiBlock::Aspects.new('/model'), {:weight => 99, :render_in_group => true}) 
+          aspects << UI::GuiBlockEntityAspectAdapter.new(GuiBlock::Aspects.new('/admin/aspect'), {:weight => 99, :render_in_group => true}) 
           
           aspects_render=UI::EntityManagementAspectRender.new(context, aspects)           
           locals = aspects_render.render(nil)
@@ -35,7 +35,7 @@ module Sinatra
         #
         # Model aspect configuration page (to set up the aspect attributes)
         #
-        app.get "/model/:model_name/aspect/:aspect" do
+        app.get "/admin/aspect/:model_name/:aspect" do
           
           context = {:app => self}
               
@@ -48,10 +48,10 @@ module Sinatra
             locals.store(:aspect, params['aspect'])
             locals.store(:model, params['model_name'])
             locals.store(:model_type, t.model_aspect_configuration.form.entity)
-            locals.store(:update_url, "/model/#{params[:model_name]}/aspect/#{params[:aspect]}/config")
-            locals.store(:get_url,    "/model/#{params[:model_name]}/aspect/#{params[:aspect]}/config")
-            locals.store(:url_base,   "/model/#{params[:model_name]}/aspect/#{params[:aspect]}")
-            locals.store(:url_destination, "/model-aspects/#{params['model_name']}")
+            locals.store(:update_url, "/api/aspects/model/#{params[:model_name]}/aspect/#{params[:aspect]}/config")
+            locals.store(:get_url,    "/api/aspects/model/#{params[:model_name]}/aspect/#{params[:aspect]}/config")
+            locals.store(:url_base,   "/api/aspects/model/#{params[:model_name]}/aspect/#{params[:aspect]}")
+            locals.store(:url_destination, "/admin/aspects/#{params['model_name']}")
             locals.store(:description, "#{params[:aspect]} - #{params[:model_name]}")
                     
             if aspect.gui_block.respond_to?(:config)

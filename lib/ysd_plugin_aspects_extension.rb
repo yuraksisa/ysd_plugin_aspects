@@ -26,7 +26,7 @@ module Huasi
                                   :weight => 3}},
                     {:path => '/configuration/extensions/aspects',
                      :options => {:title => app.t.configuration_admin_menu.extensions.aspects,
-                                  :link_route => "/model-aspects",
+                                  :link_route => "/admin/aspects",
                                   :description => 'Aspects configuration', 
                                   :module => :aspects,
                                   :weight => 4}}]                      
@@ -42,15 +42,15 @@ module Huasi
     #
     def routes(context={})
     
-      routes = [{:path => '/model-aspects',
-      	         :regular_expression => /^\/model-aspects/, 
+      routes = [{:path => '/admin/aspects',
+      	         :regular_expression => /^\/admin\/aspects/, 
                  :title => 'Aspects' , 
                  :description => 'Configure the aspects.',
                  :fit => 1,
                  :module => :aspects},
-                {:path => '/model/:model_name/aspect/:aspect',
+                {:path => '/admin/aspect/:model_name/:aspect',
                  :parent_path => "/model-aspects",
-                 :regular_expression => /^\/model\/.+\/aspect\/.+/, 
+                 :regular_expression => /^\/admin\/aspect\/.+\/.+/, 
                  :title => 'Model aspect configuration', 
                  :description => 'Edit the model/aspect configuration',
                  :fit => 1,

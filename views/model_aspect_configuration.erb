@@ -81,7 +81,7 @@ require(['YSDEntityManagement', 'YSDEntityManagementComplementHooks', 'jquery', 
   hooks = hooks.concat(EntityManagementComplementHooks.complements);
 
   var aspectConfigurationManager = new EntityManagement(urls, 'aspect configuration', 1, hooks,
-           {url_base: '<%=url_base%>', search_params : { destination: '<%=url_destination%>' }, action: 'edit'}); 
+           {prefix: '/admin', url_base: '<%=url_base%>', search_params : { destination: '<%=url_destination%>' }, action: 'edit'}); 
    
 });
   

@@ -9,7 +9,7 @@
                       <td class="table-cell"><%%=aspects[idx].aspect%></td>
                       <td class="table-cell">
                         <%% if (Object.keys(aspects[idx].aspect_attributes).length > 0) { %>
-                        <a rel="<%=prefix%>/<%%=model%>/aspect/<%%=aspects[idx].aspect%>" class="aspect_link link">
+                        <a rel="<%=prefix%>/<%%=model%>/<%%=aspects[idx].aspect%>" class="aspect_link link">
                           <img class="icon" src="/assets/img/icomoon/cog.png">
                         </a>
                         <%% } %>
@@ -331,17 +331,28 @@ require(['jquery', 'YSDEntityManagementComplementHooks', 'YSDRemoteDataSource', 
 
        // Configure the aspect add/remove button
        $('#aspects_config').bind('click', function() {
-         $('#aspects_management').show();
-         $('#aspects_management').focus();
-         $('.aspects_management_toolbar .close').bind('click', function() {
-           $('#aspects_management').hide();
-           // Obtiene los aspectos seleccionados
-           var aspects = $('input[name=aspects]:checked').map(function(value, index, array) {
+         self.addRemoveAspectsClick();
+       });
+
+    }
+
+    this.addRemoveAspectsClick = function() {
+
+       var self = this;
+
+       $('#aspects_management').show();
+       $('#aspects_management').focus();
+       $('.aspects_management_toolbar .close').bind('click', function() {
+         $('#aspects_management').hide();
+         // Obtiene los aspectos seleccionados
+         var aspects = $('input[name=aspects]:checked').map(function(value, index, array) {
              return index.getAttribute('value');
-           });
-           self.entityAspects.updateEntityAspects(aspects);
-           self.loadEntityAspects();
-         });
+          });
+         self.entityAspects.updateEntityAspects(aspects);
+         self.loadEntityAspects();
+         $('#aspects_config').bind('click', function() {
+           self.addRemoveAspectsClick();
+         });         
        });
 
     }

@@ -15,7 +15,7 @@ module Sinatra
         #
         # Retrieve the models to which can be applied aspects
         #
-        app.get "/models/?" do
+        app.get "/api/aspects/models/?" do
                   
           models = Plugins::ModelAspect.registered_models.map { |rm| {:id => rm.target_model, :aspects => rm.aspects} }
 
@@ -28,7 +28,7 @@ module Sinatra
         #
         # Get a concrete applicable model
         #
-        app.get "/model/:model_name" do
+        app.get "/api/aspects/model/:model_name" do
         
           model = (Plugins::ModelAspect.registered_models.select { |m| m.target_model == params['model_name'] }).first
           model = {:id => model.target_model, :aspects => model.aspects}
@@ -42,7 +42,7 @@ module Sinatra
         #
         # Retrieve the models to which can be applied aspects 
         #
-        ["/models/?", "/models/page/:page"].each do |path|
+        ["/api/aspects/models/?", "/api/aspects/models/page/:page"].each do |path|
          
           app.post path do
 
@@ -60,7 +60,7 @@ module Sinatra
         #
         # Update a model: aspects assignation
         # 
-        app.put "/model" do
+        app.put "/api/aspects/model" do
         
           request.body.rewind
           
@@ -79,7 +79,7 @@ module Sinatra
         #
         # Get a model/aspect configuration attributes
         #
-        app.get "/model/:model_name/aspect/:aspect/config" do
+        app.get "/api/aspects/model/:model_name/aspect/:aspect/config" do
                       
           model = (Plugins::ModelAspect.registered_models.select { |m| m.target_model == params['model_name'] }).first
           model_aspect = model.aspect(params['aspect'])
@@ -97,7 +97,7 @@ module Sinatra
         #
         # Update the model/aspect configuration attributes
         #
-        app.put "/model/:model_name/aspect/:aspect/config" do
+        app.put "/api/aspects/model/:model_name/aspect/:aspect/config" do
         
           model = (Plugins::ModelAspect.registered_models.select { |m| m.target_model == params['model_name'] }).first
           model_aspect = model.aspect(params['aspect'])
