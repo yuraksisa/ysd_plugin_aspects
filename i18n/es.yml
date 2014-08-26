@@ -13,7 +13,7 @@ aspects:
 # Aplicable model aspects (entities)
 #
 aplicable_model_aspects:
-  title: Entidades a las que se puede aplicar aspectos
+  title: Aspectos
   description: >
                <p>Las entidades que se muestran a continuación aceptan aspectos. 
                Puede escoger qué aspectos se aplicarán a cada entitat y configurar su comportamiento.</p>

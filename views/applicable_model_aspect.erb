@@ -41,13 +41,6 @@
 
 <script type="text/tmpl" id="element_template">
 
-     <div class="element_template" style="overflow:hidden">
-       <div class="entity-field">
-         <div class="entity-fieldlabel"><%= t.aplicable_model_aspects.form.model.label %></div> 
-         <div class="entity-fieldvalue"><span class="entity-id"><%%= entity.id %></span></div> 
-       </div>
-     </div>
-
 </script>
 
 <!-- Renders the form to edit an element -->
@@ -58,7 +51,7 @@
         
         <div class="form-fields">        
           <div class="formrow">
-            <label for="id" class="fieldtitle">Model <span class="mandatoryfield">*</span></label>
+            <label for="id" class="fieldtitle"><%=t.aplicable_model_aspects.form.model.label%> <span class="mandatoryfield">*</span></label>
             <input type="text" maxlength="20" id="id" name="id" class="fieldcontrol" <%% if (entity) { %> value="<%%= entity.id %>" <%% } %> />
           </div>                
         </div>
@@ -84,65 +77,3 @@
 </script>
 
 <%= element_form_extension %>
-
-<script type="text/javascript">
- 
-require(['jquery', 'YSDEntityManagement', 'YSDEntityManagementComplementHooks', 'YSDRemoteDataSource', 'YSDListSelector'], function($, EntityManagement, EntityManagementComplementHooks, RemoteDataSource, ListSelector) {
-
-  function EntityInfoHook() {
- 	   
-    this.entityKey = function(entity) {
-      return entity.id;
-    }
-
-    this.onRenderEntities = function(entities) {    
-      $('.new-entity-button').hide();
-    }  
-
-    this.onEdit = function(entity) {
-      $('#id').attr('readonly', true);
-    };
-  
-    this.adaptFormData = function(data) {  	
-      data.aspects = this.adaptAspects(data.aspects, data.id);
-      return data;	
-    }
-    
-    this.adaptAspects = function(aspects, entity) { /* It converts from an array of string (each is an aspect) to an array of ContentTypeAspect */
-      
-      if (!(aspects instanceof Array)) {
-        aspects = [aspects];
-      }
-
-      return aspects.map(function(value, index, array) {
-
-         return { aspect : value,
-                  target_model : entity
-                };   
-
-      });
-
-    }
-
-  	  	
-  };
-  
-  var urls = { 
-  	           query_url  : '/api/aspects/models',
-    	         create_url : '/api/aspects/model',
-  	           update_url : '/api/aspects/model',
-  	           delete_url : '/api/aspects/model',
-  	           get_url    : '/api/aspects/model'
-  	         };
-
-  var entityInfoHook = new EntityInfoHook();
-
-  var hooks = [entityInfoHook];
-  
-  // Add the complement hooks
-  hooks = hooks.concat(EntityManagementComplementHooks.complements);
-
-  var entityInfoManager = new EntityManagement(urls, 'aspects', 12, hooks, {prefix: '/admin'});
-   
-});
-</script>

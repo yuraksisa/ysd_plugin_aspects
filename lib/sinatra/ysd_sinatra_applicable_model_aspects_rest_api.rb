@@ -17,7 +17,7 @@ module Sinatra
         #
         app.get "/api/aspects/models/?" do
                   
-          models = Plugins::ModelAspect.registered_models.map { |rm| {:id => rm.target_model, :aspects => rm.aspects} }
+          models = Plugins::ModelAspect.managed_registered_models.map { |rm| {:id => rm.target_model, :aspects => rm.aspects} }
 
           status 200
           content_type :json
@@ -30,7 +30,7 @@ module Sinatra
         #
         app.get "/api/aspects/model/:model_name" do
         
-          model = (Plugins::ModelAspect.registered_models.select { |m| m.target_model == params['model_name'] }).first
+          model = (Plugins::ModelAspect.managed_registered_models.select { |m| m.target_model == params['model_name'] }).first
           model = {:id => model.target_model, :aspects => model.aspects}
 
           status 200
@@ -46,7 +46,7 @@ module Sinatra
          
           app.post path do
 
-            models = Plugins::ModelAspect.registered_models.map { |rm| {:id => rm.target_model, :aspects => rm.aspects} }
+            models = Plugins::ModelAspect.managed_registered_models.map { |rm| {:id => rm.target_model, :aspects => rm.aspects} }
             models_total = models.length
           
             status 200
@@ -66,7 +66,7 @@ module Sinatra
           
           model_request = JSON.parse(URI.unescape(request.body.read))
           
-          if model = (Plugins::ModelAspect.registered_models.select { |m| m.target_model == model_request['id'] }).first
+          if model = (Plugins::ModelAspect.managed_registered_models.select { |m| m.target_model == model_request['id'] }).first
             model.assign_aspects(model_request['aspects'])
           end
 
@@ -81,7 +81,7 @@ module Sinatra
         #
         app.get "/api/aspects/model/:model_name/aspect/:aspect/config" do
                       
-          model = (Plugins::ModelAspect.registered_models.select { |m| m.target_model == params['model_name'] }).first
+          model = (Plugins::ModelAspect.managed_registered_models.select { |m| m.target_model == params['model_name'] }).first
           model_aspect = model.aspect(params['aspect'])
           
           if model and model_aspect
@@ -99,7 +99,7 @@ module Sinatra
         #
         app.put "/api/aspects/model/:model_name/aspect/:aspect/config" do
         
-          model = (Plugins::ModelAspect.registered_models.select { |m| m.target_model == params['model_name'] }).first
+          model = (Plugins::ModelAspect.managed_registered_models.select { |m| m.target_model == params['model_name'] }).first
           model_aspect = model.aspect(params['aspect'])
 
           if model and model_aspect
