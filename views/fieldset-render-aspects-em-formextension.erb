@@ -309,7 +309,7 @@ require(['jquery', 'YSDEntityManagementComplementHooks', 'YSDRemoteDataSource', 
        }
    
        // Configure the aspects control
-       var dataSource = new RemoteDataSource('/aspects/' + (this.model || this.aspectModel));
+       var dataSource = new RemoteDataSource('/api/aspects/' + (this.model || this.aspectModel));
        dataSource.addListener('data_available', function(event){
          self.entityAspects.setAspects(event.data);
          self.configureAspects();
