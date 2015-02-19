@@ -37,7 +37,7 @@
            <% end %>
         </div>
         <div class="bottom-navigation-bar navigation-bar">
-             <div class="navigation-bar-nav-buttons">
+             <div class="navigation-bar-crud-buttons">
                 <input type="submit" class="update-entity-button action-button entity-management-button" value="Update"/>
              </div>
         </div>
@@ -65,7 +65,7 @@ require(['YSDEntityManagement', 'YSDEntityManagementComplementHooks', 'jquery', 
     }
 
     this.configForm = function(entity) {
-      $('.top-navigation-bar').hide();
+      $('.delete-entity-button').hide();
     }
 
   };
