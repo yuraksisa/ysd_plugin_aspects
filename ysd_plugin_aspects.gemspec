@@ -8,9 +8,10 @@ Gem::Specification.new do |s|
   s.description = "Entity management integration"
   s.summary = "Entity management integration"
   
-  s.add_runtime_dependency "ysd_core_plugins"         # Plugins
-  s.add_runtime_dependency "ysd_core_themes"          # Themes
-  s.add_runtime_dependency "ysd_yito_core"
-  s.add_runtime_dependency "ysd_yito_js"
+  s.add_dependency "ysd_md_entitymanagement","~>0.2"
+
+  s.add_runtime_dependency "ysd_core_plugins","~>0.2"         # Plugins
+  s.add_runtime_dependency "ysd_core_themes","~>0.2"          # Themes
+  s.add_runtime_dependency "ysd_yito_core","~>0.1"
 
 end
